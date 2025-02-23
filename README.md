@@ -1,336 +1,373 @@
-# Проектная работа "Веб-ларек"
-Стек технологий
+    # Проектная работа "Веб-ларек"
+    Стек технологий
 
-    HTML
+        HTML
 
-    SCSS
+        SCSS
 
-    TypeScript (TS)
+        TypeScript (TS)
 
-    Webpack
+        Webpack
 
-Структура проекта
-- src/ — исходные файлы проекта
-- src/components/ — папка с JS компонентами
-- src/components/base/ — папка с базовым кодом
+    Структура проекта
+    - src/ — исходные файлы проекта
+    - src/components/ — папка с JS компонентами
+    - src/components/base/ — папка с базовым кодом
 
-Важные файлы:
+    Важные файлы:
 
-- src/pages/index.html — HTML-файл главной страницы
-- src/types/index.ts — файл с типами
-- src/index.ts — точка входа приложения
-- src/scss/styles.scss — корневой файл стилей
-- src/utils/constants.ts — файл с константами
-- src/utils/utils.ts — файл с утилитами
+    - src/pages/index.html — HTML-файл главной страницы
+    - src/types/index.ts — файл с типами
+    - src/index.ts — точка входа приложения
+    - src/scss/styles.scss — корневой файл стилей
+    - src/utils/constants.ts — файл с константами
+    - src/utils/utils.ts — файл с утилитами
 
 
-## Установка и запуск
+    ## Установка и запуск
 
-Для установки зависимостей и запуска проекта выполните следующие команды:
+    Для установки зависимостей и запуска проекта выполните следующие команды:
 
-bash
-npm install
-npm run dev
+    bash
+    npm install
+    npm run dev
 
-или
+    или
 
-bash
-yarn install
-yarn start
+    bash
+    yarn install
+    yarn start
 
-## Сборка
+    ## Сборка
 
-Для сборки проекта используйте команды:
+    Для сборки проекта используйте команды:
 
-bash
-npm run build
+    bash
+    npm run build
 
-или
+    или
 
-bash
-yarn build
+    bash
+    yarn build
 
-## Описание данных
-Интерфейс товара
+    ## Описание данных
+    Все перечисленные ниже интерфейсы и типы объявлены в файле src/types/index.ts.
+    
+    Интерфейс товара
 
-typescript
-interface IProduct {
-  id: string;
-  details?: string;
-  imageUrl: string;
-  name: string;
-  category: string;
-  cost: number;
+    typescript
+    interface IProduct {
+    id: string;
+    details?: string;
+    imageUrl: string;
+    name: string;
+    category: string;
+    cost: number;
+    }
+
+    Интерфейс для коллекции товаров
+
+    typescript
+    interface IProductsCollection {
+    items: IProduct[];
+    }
+
+    Интерфейс для корзины
+
+    typescript
+    interface ICartItem {
+    productId: string;
+    name: string;
+    cost: number; 
+    quantity: number; 
+    }
+
+    Интерфейс для модели корзины
+
+    typescript
+    interface IShoppingCart {
+    items: ICartItem[];
+    }
+
+    Интерфейс для формы контактных данных пользователя
+
+    typescript
+    interface IUserContactForm {
+    emailAddress: string;
+    phoneNumber: string;
+    }
+
+    Интерфейс для формы выбора метода оплаты и ввода адреса
+
+    typescript
+    interface IPaymentDetails {
+    method: TPaymentMethod;
+    deliveryAddress: string;
+    }
+    
+    Интерфейс заказа для отправки на сервер
+
+    typescript
+    interface IOrder {
+    items: ICartItem[];
+    contactInfo: IUserContactForm;
+    paymentDetails: IPaymentDetails;
+    totalAmount: number;
 }
 
-Интерфейс для коллекции товаров
+    Тип, описывающий возможные методы оплаты
 
-typescript
-interface IProductsCollection {
-  items: IProduct[];
-}
+    typescript
+    export type TPaymentMethod = 'creditCard' | 'cash' | undefined;
 
-Интерфейс для корзины
+    ## Архитектура приложения
 
-typescript
-interface ICartItem {
-  product: IProduct;
-  itemId: string;
-  quantity: number;
-}
+    Код приложения организован по принципу MVP (Model-View-Presenter):
 
-Интерфейс для модели корзины
+    - Слой представления - отвечает за отображение информации на странице.
 
-typescript
-interface IShoppingCart {
-  items: ICartItem[];
-}
+    - Слой данных - управляет хранением и изменением данных.
 
-Интерфейс для формы контактных данных пользователя
+    - Презентер - связывает представление и данные.
 
-typescript
-interface IUserContactForm {
-  emailAddress: string;
-  phoneNumber: string;
-}
+    ### Базовый код
+    #### Класс ApiService
 
-Интерфейс для формы выбора метода оплаты и ввода адреса
+    Класс для взаимодействия с API, поддерживающий запросы GET и POST (включая PUT и DELETE).
 
-typescript
-interface IPaymentDetails {
-  method: TPaymentMethod;
-  deliveryAddress: string;
-}
+    Свойства:
 
-Тип, описывающий возможные методы оплаты
+    - **`baseApiUrl`**: Базовый URL для запросов.
 
-typescript
-export type TPaymentMethod = 'creditCard' | 'cash' | undefined;
+    - **`requestOptions`**: Опции запроса, включая заголовки.
 
-## Архитектура приложения
+    Методы:
 
-Код приложения организован по принципу MVP (Model-View-Presenter):
+    - **`constructor(baseApiUrl: string, requestOptions: RequestInit = {})`**: Инициализация с базовым URL.
 
-- Слой представления - отвечает за отображение информации на странице.
+    - **`processResponse(response: Response)`**: Обработка ответа от сервера.
 
-- Слой данных - управляет хранением и изменением данных.
+    - **`fetchData(uri: string)`**: Выполнение GET-запроса.
 
-- Презентер - связывает представление и данные.
+    - **`sendData(uri: string, payload: object, method: ApiRequestMethods = 'POST')`**: Выполнение POST-запроса.
 
-### Базовый код
-#### Класс ApiService
+    Типы:
 
-Класс для взаимодействия с API, поддерживающий запросы GET и POST (включая PUT и DELETE).
+    - **`ApiResponse<Type>**`: Ответ с количеством элементов и данными.
 
-Свойства:
+    - **`ApiRequestMethods**`: Типы HTTP-методов: 'POST', 'PUT', 'DELETE'.
 
-- **`baseApiUrl`**: Базовый URL для запросов.
+    Класс EventBus
 
-- **`requestOptions`**: Опции запроса, включая заголовки.
+    Реализация системы событий, позволяющая подписываться на события и управлять обработчиками.
 
-Методы:
+    Свойства:
 
-- **`constructor(baseApiUrl: string, requestOptions: RequestInit = {})`**: Инициализация с базовым URL.
+    - **`_eventMap`**: Хранит события и подписчиков в виде карты.
 
-- **`processResponse(response: Response)`**: Обработка ответа от сервера.
+    Методы:
 
-- **`fetchData(uri: string)`**: Выполнение GET-запроса.
+    - subscribe<T extends object>(eventName: EventIdentifier, callback: (eventData: T) => void): Подписка на событие.
 
-- **`sendData(uri: string, payload: object, method: ApiRequestMethods = 'POST')`**: Выполнение POST-запроса.
+    - unsubscribe(eventName: EventIdentifier, callback: SubscriberFunction): Удаление обработчика события.
 
-Типы:
+    - publish<T extends object>(eventName: string, data?: T): Инициация события.
 
-- **`ApiResponse<Type>**`: Ответ с количеством элементов и данными.
+    - subscribeAll(callback: (eventData: EventPayload) => void): Подписка на все события.
 
-- **`ApiRequestMethods**`: Типы HTTP-методов: 'POST', 'PUT', 'DELETE'.
+    - unsubscribeAll(): Удаление всех обработчиков событий.
 
-Класс EventBus
+    ## Типы событий:
+    Типы событий (EventIdentifier, SubscriberFunction, EventPayload) объявлены в src/types/index.ts.
 
-Реализация системы событий, позволяющая подписываться на события и управлять обработчиками.
+    - **`EventIdentifier**`: Имя события (строка или регулярное выражение).
 
-Свойства:
+    - **`SubscriberFunction**`: Функция-подписчик на событие.
 
-- **`_eventMap`**: Хранит события и подписчиков в виде карты.
+    - **`EventPayload**`: Событие с данными.
 
-Методы:
+    ### Слой модели
 
-- subscribe<T extends object>(eventName: EventIdentifier, callback: (eventData: T) => void): Подписка на событие.
+    #### Класс ProductData
 
-- unsubscribe(eventName: EventIdentifier, callback: SubscriberFunction): Удаление обработчика события.
+    Класс отвечает за управление данными о товарах.
 
-- publish<T extends object>(eventName: string, data?: T): Инициация события.
+    Поля класса:
 
-- subscribeAll(callback: (eventData: EventPayload) => void): Подписка на все события.
+    - _productsList: IProduct[]; - массив товаров.
 
-- unsubscribeAll(): Удаление всех обработчиков событий.
+    Методы:
 
-## Типы событий:
+    - updateProducts(products: IProduct[]): void;
+    - getProductsList(): IProduct[]; - возвращает список всех продуктов.
 
-- **`EventIdentifier**`: Имя события (строка или регулярное выражение).
+    - findProductById(id: string): IProduct | undefined; - возвращает товар по его id.
 
-- **`SubscriberFunction**`: Функция-подписчик на событие.
+    ### Класс CartManager
 
-- **`EventPayload**`: Событие с данными.
+    Класс отвечает за логику работы с корзиной.
 
-### Слой модели
+    Поля класса:
+    - contactInfo: IUserContactForm | null; - контактные данные пользователя (email и телефон). 
+    - _paymentDetails: IPaymentDetails | null; - нформация о методе оплаты и адресе доставки.
+    - _cartItems: ICartItem[]; - массив товаров в корзине.
 
-#### Класс ProductData
+    Методы:
 
-Класс отвечает за управление данными о товарах.
+    - addItem(itemId: string): void; - добавляет товар в корзину по идентификатору.
 
-Поля класса:
+    - removeItem(itemId: string): void; - удаляет товар из корзины по идентификатору.
 
-- _productsList: IProduct[]; - массив товаров.
+    - getItems(): IProduct[]; - возвращает массив товаров в корзине.
 
-Методы:
+    - emptyCart(): void; - очищает корзину.
+   
+    - setContactInfo(contactInfo: IUserContactForm): void — сохраняет контактные данные пользователя.
+    
+    - setPaymentDetails(paymentDetails: IPaymentDetails): void; - сохраняет метод оплаты и адрес доставки.
+    
+    - validateContactInfo(): boolean; - проверяет корректность введенных контактных данных (email и телефон).
+    
+    - validatePaymentDetails(): boolean; - проверяет заполненность метода оплаты и адреса доставки.
+    
+    - getOrderData(): IOrder | null; - возвращает данные заказа, если все данные валидны, иначе null.
 
-- updateProducts(products: IProduct[]): void;
+    ### Слой представления
 
-- findProductById(id: string): IProduct | undefined; - возвращает товар по его id.
+    Все классы представления отвечают за отображение данных внутри контейнера (DOM элемент).
 
-### Класс CartManager
+    #### Класс ModalWindow
+   
+    Назначение EventBus для ModalWindow:
+    
+    Конструктор: 
+    
+    typescript
+    constructor(selector: string, eventBusInstance: EventBus) 
 
-Класс отвечает за логику работы с корзиной.
+    Принимает селектор модального окна и экземпляр класса EventBus для инициирования событий.
 
-Поля класса:
+    Поля класса:
+    
+    - modalElement: HTMLElement - элемент модального окна.
 
-- _cartItems: ICartItem[]; - массив товаров в корзине.
+    - eventBusInstance: EventBus - система событий для взаимодействия с другими компонентами.
 
-Методы:
+    Методы: 
 
-- addItem(itemId: string): void; - добавляет товар в корзину по идентификатору.
+    - open(): void - открывает модальное окно, добавляя CSS-класс 'active' и публикуя событие 'modal.open'.
 
-- removeItem(itemId: string): void; - удаляет товар из корзины по идентификатору.
+    - close(): void - закрывает модальное окно, удаляя CSS-класс 'active' и публикуя событие 'modal.close'.
 
-- getItems(): IProduct[]; - возвращает массив товаров в корзине.
+    - setContent(content: HTMLElement): void - заменяет содержимое тела модального окна переданным HTML-элементом.
 
-- emptyCart(): void; - очищает корзину.
 
-### Слой представления
 
-Все классы представления отвечают за отображение данных внутри контейнера (DOM элемент).
 
-#### Класс ModalWindow
+    #### Класс MainPage
 
-Реализует модальное окно. Предоставляет методы для открытия и закрытия модального окна.
+    Отвечает за управление состоянием главной страницы, отображение содержимого корзины и подсчет товаров. Предоставляет методы для блокировки страницы и обновления счетчика товаров в корзине.
 
-Конструктор:
+    Поля класса:
 
-typescript
-constructor(selector: string, eventBusInstance: EventBus) 
+    - pageWrapperElement: HTMLElement - обертка страницы.
 
-Принимает селектор модального окна и экземпляр класса EventBus для инициирования событий.
+    - cartButtonElement: HTMLButtonElement - кнопка для открытия корзины.
 
-Поля класса:
+    - itemCounterElement: HTMLSpanElement - счетчик товаров в корзине.
 
-- modalElement: HTMLElement - элемент модального окна.
+    Методы:
 
-- eventBusInstance: EventBus - система событий.
+    - set isPageLocked(value: boolean) - блокирует или разблокирует страницу.
 
-#### Класс MainPage
+    - set itemCounter(value: number) - обновляет счетчик товаров в корзине.
 
-Отвечает за управление состоянием главной страницы, отображение содержимого корзины и подсчет товаров. Предоставляет методы для блокировки страницы и обновления счетчика товаров в корзине.
+    #### Класс ContactFormHandler
 
-Поля класса:
+    Реализует работу с формой ввода контактных данных пользователя.
 
-- pageWrapperElement: HTMLElement - обертка страницы.
+    Поля класса:
 
-- cartButtonElement: HTMLButtonElement - кнопка для открытия корзины.
+    - emailFieldElement: HTMLInputElement - поле для ввода email.
 
-- itemCounterElement: HTMLSpanElement - счетчик товаров в корзине.
+    - phoneFieldElement: HTMLInputElement - поле для ввода номера телефона.
 
-Методы:
+    Методы:
 
-- set isPageLocked(value: boolean) - блокирует или разблокирует страницу.
+    - set phone(value: string) - устанавливает номер телефона.
 
-- set itemCounter(value: number) - обновляет счетчик товаров в корзине.
+    - set email(value: string) - устанавливает email адрес.
 
-#### Класс ContactFormHandler
+    - get phone(): string - возвращает номер телефона.
 
-Реализует работу с формой ввода контактных данных пользователя.
+    - get email(): string - возвращает email адрес.
 
-Поля класса:
+    #### Класс PaymentFormHandler
 
-- emailFieldElement: HTMLInputElement - поле для ввода email.
+    Реализует работу с формой выбора способа оплаты.
 
-- phoneFieldElement: HTMLInputElement - поле для ввода номера телефона.
+    Поля класса:
 
-Методы:
+    - addressFieldElement: HTMLInputElement - поле для ввода адреса доставки.
 
-- set phone(value: string) - устанавливает номер телефона.
+    - creditCardButtonElement: HTMLButtonElement - кнопка для оплаты картой.
 
-- set email(value: string) - устанавливает email адрес.
+    - cashButtonElement: HTMLButtonElement - кнопка для оплаты наличными.
 
-- get phone(): string - возвращает номер телефона.
+    Методы:
 
-- get email(): string - возвращает email адрес.
+    - set address(value: string) - устанавливает адрес доставки.
 
-#### Класс PaymentFormHandler
+    - set paymentMethod(value: TPaymentMethod) - устанавливает способ оплаты.
 
-Реализует работу с формой выбора способа оплаты.
+    - get address(): string - возвращает адрес доставки.
 
-Поля класса:
+    - get paymentMethod(): TPaymentMethod - возвращает способ оплаты.
 
-- addressFieldElement: HTMLInputElement - поле для ввода адреса доставки.
+    ### Класс OrderSuccessHandler
 
-- creditCardButtonElement: HTMLButtonElement - кнопка для оплаты картой.
+    Реализует отображение информации о успешном завершении заказа.
 
-- cashButtonElement: HTMLButtonElement - кнопка для оплаты наличными.
+    Поля класса:
 
-Методы:
+    - totalAmountDisplayElement: HTMLParagraphElement - элемент для отображения общей суммы заказа.
 
-- set address(value: string) - устанавливает адрес доставки.
+    Методы:
 
-- set paymentMethod(value: TPaymentMethod) - устанавливает способ оплаты.
+    - set totalAmount(value: string) - устанавливает общую сумму заказа.
 
-- get address(): string - возвращает адрес доставки.
+    ### Слой презентера
 
-- get paymentMethod(): TPaymentMethod - возвращает способ оплаты.
+    #### Класс ApplicationApiConnector
 
-### Класс OrderSuccessHandler
+    Принимает экземпляр класса ApiService в конструкторе и предоставляет методы для взаимодействия с бэкендом сервиса.
 
-Реализует отображение информации о успешном завершении заказа.
 
-Поля класса:
+    # Взаимодействие компонентов
 
-- totalAmountDisplayElement: HTMLParagraphElement - элемент для отображения общей суммы заказа.
+    Код, описывающий взаимодействие между представлением и данными, находится в файле index.ts, который выполняет роль презентера. Взаимодействие осуществляется через события, генерируемые системой событий и обработчики этих событий, описанные в index.ts.
 
-Методы:
+    В index.ts создаются экземпляры всех необходимых классов, после чего настраивается обработка событий:
+    События взаимодействия пользователя:
 
-- set totalAmount(value: string) - устанавливает общую сумму заказа.
+    - modalWindow.open — открытие модального окна для редактирования или подтверждения действий (например, добавление товара в корзину).
 
-### Слой презентера
+    - modalWindow.close — закрытие модального окна.
 
-#### Класс ApplicationApiConnector
+    - product.select — выбор товара для просмотра или добавления в корзину (например, класс MainPage).
 
-Принимает экземпляр класса ApiService в конструкторе и предоставляет методы для взаимодействия с бэкендом сервиса.
+    - product.addToCart — добавление товара в корзину (инициируется через модальное окно или интерфейс корзины).
 
+    - product.removeFromCart — удаление товара из корзины (инициируется через модальное окно или интерфейс корзины).
 
-# Взаимодействие компонентов
+    - cart.submitOrder — переход к оформлению заказа с товарами в корзине (классы MainPage или CartManager).
 
-Код, описывающий взаимодействие между представлением и данными, находится в файле index.ts, который выполняет роль презентера. Взаимодействие осуществляется через события, генерируемые системой событий и обработчики этих событий, описанные в index.ts.
+    - payment.validateForm — событие для проверки формы оплаты (класс PaymentFormHandler).
 
-В index.ts создаются экземпляры всех необходимых классов, после чего настраивается обработка событий:
-События взаимодействия пользователя:
+    - contact.validateForm — событие для проверки формы контактных данных покупателя (класс ContactFormHandler).
 
-- modalWindow.open — открытие модального окна для редактирования или подтверждения действий (например, добавление товара в корзину).
+    - payment.submitForm — подтверждение и сохранение метода оплаты и адреса доставки (класс PaymentFormHandler).
 
-- modalWindow.close — закрытие модального окна.
+    - contact.submitForm — подтверждение и сохранение контактных данных покупателя (класс ContactFormHandler).
 
-- product.select — выбор товара для просмотра или добавления в корзину (например, класс MainPage).
-
-- product.addToCart — добавление товара в корзину (инициируется через модальное окно или интерфейс корзины).
-
-- product.removeFromCart — удаление товара из корзины (инициируется через модальное окно или интерфейс корзины).
-
-- cart.submitOrder — переход к оформлению заказа с товарами в корзине (классы MainPage или CartManager).
-
-- payment.validateForm — событие для проверки формы оплаты (класс PaymentFormHandler).
-
-- contact.validateForm — событие для проверки формы контактных данных покупателя (класс ContactFormHandler).
-
-- payment.submitForm — подтверждение и сохранение метода оплаты и адреса доставки (класс PaymentFormHandler).
-
-- contact.submitForm — подтверждение и сохранение контактных данных покупателя (класс ContactFormHandler).
-
-- order.completeSuccess — успешное завершение заказа и переход к списку товаров (класс OrderSuccessHandler).
+    - order.completeSuccess — успешное завершение заказа и переход к списку товаров (класс OrderSuccessHandler).
