@@ -1,4 +1,4 @@
-    # Проектная работа "Веб-ларек"
+# Проектная работа "Веб-ларек"
     Стек технологий
 
         HTML
@@ -24,7 +24,7 @@
     - src/utils/utils.ts — файл с утилитами
 
 
-    ## Установка и запуск
+## Установка и запуск
 
     Для установки зависимостей и запуска проекта выполните следующие команды:
 
@@ -50,7 +50,7 @@
     bash
     yarn build
 
-    ## Описание данных
+## Описание данных
     Все перечисленные ниже интерфейсы и типы объявлены в файле src/types/index.ts.
     
     Интерфейс товара
@@ -120,7 +120,7 @@
     typescript
     export type TPaymentMethod = 'creditCard' | 'cash' | undefined;
 
-    ## Архитектура приложения
+## Архитектура приложения
 
     Код приложения организован по принципу MVP (Model-View-Presenter):
 
@@ -137,19 +137,19 @@
 
     Свойства:
 
-    - **`baseApiUrl`**: Базовый URL для запросов.
+   - **`baseApiUrl`**: Базовый URL для запросов.
 
-    - **`requestOptions`**: Опции запроса, включая заголовки.
+   - **`requestOptions`**: Опции запроса, включая заголовки.
 
     Методы:
 
-    - **`constructor(baseApiUrl: string, requestOptions: RequestInit = {})`**: Инициализация с базовым URL.
+   - **`constructor(baseApiUrl: string, requestOptions: RequestInit = {})`**: Инициализация с базовым URL.
 
-    - **`processResponse(response: Response)`**: Обработка ответа от сервера.
+   - **`processResponse(response: Response)`**: Обработка ответа от сервера.
 
-    - **`fetchData(uri: string)`**: Выполнение GET-запроса.
+   - **`fetchData(uri: string)`**: Выполнение GET-запроса.
 
-    - **`sendData(uri: string, payload: object, method: ApiRequestMethods = 'POST')`**: Выполнение POST-запроса.
+   - **`sendData(uri: string, payload: object, method: ApiRequestMethods = 'POST')`**: Выполнение POST-запроса.
 
     Типы:
 
@@ -262,8 +262,6 @@
     - setContent(content: HTMLElement): void - заменяет содержимое тела модального окна переданным HTML-элементом.
 
 
-
-
     #### Класс MainPage
 
     Отвечает за управление состоянием главной страницы, отображение содержимого корзины и подсчет товаров. Предоставляет методы для блокировки страницы и обновления счетчика товаров в корзине.
@@ -324,7 +322,30 @@
 
     - get paymentMethod(): TPaymentMethod - возвращает способ оплаты.
 
-    ### Класс OrderSuccessHandler
+   #### Класс CheckoutDetailsView
+
+    Реализует работу с формой указания адреса доставки и выбора способа расчета.
+
+    Поля класса:
+
+    - deliveryAddressInput: HTMLInputElement - текстовое поле для ввода адреса доставки.
+
+    - cardPaymentButton: HTMLButtonElement - кнопка выбора безналичной оплаты.
+
+    - cashPaymentButton: HTMLButtonElement - кнопка выбора наличного расчета.
+
+    Методы:
+
+    - set deliveryAddress(value: string) - устанавливает значение адреса доставки.
+
+    - set paymentType(value: TPaymentMethod) - активирует выбранный способ оплаты.
+
+    - get deliveryAddress(): string - возвращает текущий адрес доставки.
+
+    - get paymentType(): TPaymentMethod - возвращает выбранный метод оплаты.
+
+
+   #### Класс OrderSuccessHandler
 
     Реализует отображение информации о успешном завершении заказа.
 
