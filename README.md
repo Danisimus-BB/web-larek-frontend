@@ -322,27 +322,95 @@
 
     - get paymentMethod(): TPaymentMethod - возвращает способ оплаты.
 
-   #### Класс CheckoutDetailsView
-
-    Реализует работу с формой указания адреса доставки и выбора способа расчета.
+   #### Класс ProductCard
+    Отображает карточку товара в каталоге продуктов.
 
     Поля класса:
 
-    - deliveryAddressInput: HTMLInputElement - текстовое поле для ввода адреса доставки.
+    - cardElement: HTMLElement - корневой элемент карточки
 
-    - cardPaymentButton: HTMLButtonElement - кнопка выбора безналичной оплаты.
+    - productImage: HTMLImageElement - элемент изображения товара
 
-    - cashPaymentButton: HTMLButtonElement - кнопка выбора наличного расчета.
+    - productName: HTMLElement - элемент названия товара
+
+    - productCategory: HTMLElement - элемент категории товара
+
+    - productPrice: HTMLElement - элемент отображения цены
+
+    - addToCartButton: HTMLButtonElement - кнопка добавления в корзину
 
     Методы:
 
-    - set deliveryAddress(value: string) - устанавливает значение адреса доставки.
+    - updateProductData(product: IProduct) - обновляет данные карточки согласно переданному товару
 
-    - set paymentType(value: TPaymentMethod) - активирует выбранный способ оплаты.
+    - setAddToCartHandler(handler: () => void) - устанавливает обработчик клика на кнопку добавления
 
-    - get deliveryAddress(): string - возвращает текущий адрес доставки.
+    #### Класс CartView
+    Отображает содержимое корзины покупок.
 
-    - get paymentType(): TPaymentMethod - возвращает выбранный метод оплаты.
+    Поля класса:
+
+    - cartItemsContainer: HTMLElement - контейнер для элементов корзины
+
+    - totalAmountElement: HTMLElement - элемент отображения общей суммы
+
+    - checkoutButton: HTMLButtonElement - кнопка оформления заказа
+
+    - clearCartButton: HTMLButtonElement - кнопка очистки корзины
+
+    Методы:
+
+    - updateCartItems(items: ICartItem[]) - обновляет список товаров в корзине
+
+    - updateTotalAmount(total: number) - обновляет отображение общей суммы
+
+    - setCheckoutHandler(handler: () => void) - устанавливает обработчик оформления заказа
+
+    - setClearCartHandler(handler: () => void) - устанавливает обработчик очистки корзины
+    
+    #### Класс CartItemView
+    Отображает отдельный товар в списке корзины.
+
+    Поля класса:
+
+    - itemElement: HTMLElement - корневой элемент позиции
+
+    - quantityInput: HTMLInputElement - поле ввода количества
+
+    - totalPriceElement: HTMLElement - элемент отображения суммы позиции
+
+    - removeButton: HTMLButtonElement - кнопка удаления из корзины
+
+    Методы:
+
+    - updateQuantity(quantity: number) - обновляет количество и пересчитывает сумму
+
+    - setQuantityChangeHandler(handler: (newQuantity: number) => void) - обработчик изменения количества
+
+    - setRemoveHandler(handler: () => void) - обработчик удаления позиции
+
+   #### Класс ProductDetailsView
+    - Отображает детальную информацию о продукте.
+
+    Поля класса:
+
+    - detailsContainer: HTMLElement - контейнер деталей продукта
+
+    - detailsImage: HTMLImageElement - увеличенное изображение товара
+
+    - detailsDescription: HTMLElement - блок с подробным описанием
+
+    - detailsPrice: HTMLElement - элемент отображения цены
+
+    - addToCartButton: HTMLButtonElement - кнопка добавления в корзину
+
+    Методы:
+
+    - showProductDetails(product: IProduct) - отображает детали выбранного продукта
+
+    - hide() - скрывает контейнер с деталями
+
+    - setAddToCartHandler(handler: () => void) - устанавливает обработчик добавления из детального просмотра
 
 
    #### Класс OrderSuccessHandler
