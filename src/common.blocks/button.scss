@@ -1,20 +1,14 @@
-@use "variables" as *;
-@use "mixins";
+@use "../scss/variables" as *;
 
 .button {
-  @include mixins.button($primary, white, $hover);
-  border: 0;
-
-  &_alt {
-    @include mixins.button(white, $primaryLight, $primaryLight);
-    border: $defaultBorder;
-    &:hover {
-      border: $hoverBorder;
-    }
-  }
-
-  &_alt-active {
-    @include mixins.button(white, $primaryLight, $primaryLight);
-    border: $hoverBorder;
+  padding: $spacing-small;
+  background-color: $primary-color;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  
+  &:hover {
+    background-color: $primary-hover;
   }
 }

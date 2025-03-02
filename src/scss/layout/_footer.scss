@@ -1,0 +1,28 @@
+@use "../abstracts/variables" as variables;
+@use "../abstracts/mixins" as mixins;
+
+.footer {
+  background-color: variables.$color-text;
+  color: white;
+  padding: variables.$spacing-xl 0;
+  margin-top: variables.$spacing-xxl;
+  
+  &__container {
+    max-width: variables.$container-max-width;
+    margin: 0 auto;
+    padding: 0 variables.$container-padding;
+  }
+  
+  &__content {
+    @include mixins.flex(row, space-between, flex-start);
+    flex-wrap: wrap;
+    gap: variables.$spacing-lg;
+  }
+  
+  &__copyright {
+    margin-top: variables.$spacing-lg;
+    text-align: center;
+    font-size: variables.$font-size-small;
+    color: rgba(255, 255, 255, 0.7);
+  }
+} 

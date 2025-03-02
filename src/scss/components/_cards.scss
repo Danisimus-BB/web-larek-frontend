@@ -1,0 +1,80 @@
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.card {
+  @include card;
+  
+  &__image {
+    width: 100%;
+    height: auto;
+    border-radius: $border-radius-sm;
+    margin-bottom: $spacing-md;
+  }
+  
+  &__title {
+    font-size: $font-size-large;
+    font-weight: bold;
+    margin-bottom: $spacing-sm;
+  }
+  
+  &__description {
+    color: $color-text-light;
+    margin-bottom: $spacing-md;
+  }
+  
+  &__price {
+    font-weight: bold;
+    font-size: $font-size-large;
+    margin-bottom: $spacing-md;
+  }
+  
+  &__actions {
+    @include flex(row, space-between, center);
+  }
+}
+
+.product-card {
+  @include card;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  &__image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: $border-radius-sm;
+    margin-bottom: $spacing-md;
+  }
+  
+  &__category {
+    display: inline-block;
+    padding: $spacing-xs $spacing-sm;
+    background-color: rgba($color-primary, 0.1);
+    color: $color-primary;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-small;
+    margin-bottom: $spacing-sm;
+  }
+  
+  &__title {
+    font-size: $font-size-large;
+    font-weight: bold;
+    margin-bottom: $spacing-sm;
+  }
+  
+  &__price {
+    font-weight: bold;
+    font-size: $font-size-large;
+    margin-bottom: $spacing-md;
+  }
+  
+  &__button {
+    @include button-base;
+    @include button-variant($color-primary, white);
+    width: 100%;
+  }
+} 

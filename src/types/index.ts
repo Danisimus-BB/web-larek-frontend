@@ -1,4 +1,3 @@
-import './scss/styles.scss';
 export interface IProduct {
     id: string;
     details?: string;
@@ -7,6 +6,13 @@ export interface IProduct {
     category: string;
     cost: number;
     }
+
+export interface ICartItem {
+        productId: string;
+        name: string;
+        cost: number; 
+        quantity: number; 
+        }
 
 export interface IShoppingCart {
     items: ICartItem[];
@@ -31,3 +37,19 @@ export interface IOrder {
             }
 
 export type TPaymentMethod = 'creditCard' | 'cash' | undefined;
+
+// Добавляем интерфейс для данных заказа
+export interface IOrderData {
+    items: Array<{
+        product: {
+            id: string;
+            price: number;
+            [key: string]: any;
+        };
+        quantity: number;
+    }>;
+    paymentMethod: string;
+    email: string;
+    phone: string;
+    address: string;
+}

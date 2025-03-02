@@ -1,0 +1,373 @@
+/* Переменные */
+$bg-dark: #0f1020;
+$bg-card: #1a1a2e;
+$text-primary: #f0f0f0;
+$text-secondary: #b3b3b3;
+$neon-blue: #00d9ff;
+$neon-purple: #b537f2;
+$neon-yellow: #ffee00;
+$accent: $neon-blue;
+$border-radius: 12px;
+$card-shadow: 0 0 15px rgba($neon-blue, 0.3);
+
+/* Миксины */
+@mixin transition($property: all, $duration: 0.3s, $timing: ease) {
+  transition: $property $duration $timing;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Добавляем определение миксина card-base */
+@mixin card-base {
+  background-color: $bg-card;
+  border-radius: $border-radius;
+  overflow: hidden;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Базовые стили */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: $text-primary;
+  background-color: $bg-dark;
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba($neon-blue, 0.1) 0%, transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba($neon-purple, 0.1) 0%, transparent 25%);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Контейнер */
+.container {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Типографика */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Arial', sans-serif;
+  margin-bottom: 16px;
+  font-weight: bold;
+  line-height: 1.2;
+  color: $text-primary;
+}
+
+h1 {
+  font-size: 32px;
+  text-shadow: none;
+}
+
+h2 {
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 20px;
+}
+
+p {
+  margin-bottom: 16px;
+  color: $text-secondary;
+}
+
+a {
+  color: $neon-blue;
+  text-decoration: none;
+  @include transition(color);
+
+  &:hover {
+    text-shadow: none;
+    text-decoration: underline;
+  }
+}
+
+/* Кнопки */
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  @include transition;
+  border: 1px solid transparent;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  
+  &--primary {
+    background-color: $neon-blue;
+    color: #000;
+    box-shadow: none;
+    
+    &:hover {
+      background-color: transparent;
+      color: $neon-blue;
+      border-color: $neon-blue;
+      box-shadow: none;
+    }
+  }
+  
+  &--secondary {
+    background-color: $neon-blue;
+    color: #000;
+    box-shadow: none;
+    
+    &:hover {
+      background-color: transparent;
+      color: $neon-blue;
+      border-color: $neon-blue;
+      box-shadow: none;
+    }
+  }
+  
+  &--outline {
+    background-color: transparent;
+    border: 1px solid $neon-purple;
+    color: $neon-purple;
+    box-shadow: none;
+    
+    &:hover {
+      box-shadow: none;
+      color: #fff;
+      text-shadow: none;
+    }
+  }
+}
+
+/* Шапка */
+.header {
+  background-color: rgba(10, 10, 25, 0.9);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 20px rgba(0, 255, 102, 0.2);
+  padding: 16px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid rgba(0, 255, 102, 0.2);
+  
+  &__container {
+    @include flex-between;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  
+  &__logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: $neon-blue;
+    text-shadow: none;
+    text-decoration: none;
+  }
+  
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+}
+
+.nav__link {
+  color: $text-primary;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 5px 0;
+  position: relative;
+  
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: $neon-blue;
+    @include transition(width);
+    box-shadow: 0 0 8px $neon-blue;
+  }
+  
+  &:hover:after,
+  &--active:after {
+    width: 100%;
+  }
+}
+
+.cart-button {
+  position: relative;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  
+  svg {
+    fill: $neon-blue;
+    @include transition;
+  }
+  
+  &:hover svg {
+    fill: $text-primary;
+    filter: drop-shadow(0 0 5px $neon-blue);
+  }
+}
+
+.cart-counter {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: $neon-yellow;
+  color: #000;
+  font-size: 12px;
+  font-weight: bold;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  @include flex-center;
+  box-shadow: 0 0 10px rgba($neon-yellow, 0.7);
+}
+
+/* Остальные стили... */
+
+/* Продуктовые карточки */
+.product-card {
+  position: relative;
+  @include card-base;
+  @include transition;
+  border: 1px solid rgba($neon-blue, 0.2);
+  animation: fadeIn 0.5s ease;
+  
+  &:hover {
+    box-shadow: 0 0 20px rgba($neon-blue, 0.4);
+    border-color: rgba($neon-blue, 0.4);
+    transform: translateY(-5px);
+  }
+  
+  &__image {
+    width: 100%;
+    border-radius: $border-radius;
+    margin-bottom: 12px;
+  }
+  
+  &__category {
+    display: inline-block;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    background-color: $neon-blue;
+    color: #000;
+    font-weight: bold;
+  }
+  
+  &__title {
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: $text-primary;
+  }
+  
+  &__price {
+    font-size: 20px;
+    font-weight: bold;
+    color: $neon-blue;
+    margin-bottom: 16px;
+    text-shadow: none;
+    
+    &:after {
+      content: ' синапсов';
+    }
+  }
+  
+  &__button {
+    margin-top: auto;
+    border-radius: 24px;
+    background-color: rgba(0, 255, 102, 0.1);
+    color: $neon-blue;
+    padding: 10px;
+    border: 1px solid $neon-blue;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    @include transition;
+    box-shadow: none;
+    
+    &:hover {
+      background-color: $neon-blue;
+      color: #000;
+      box-shadow: none;
+    }
+  }
+}
+
+/* ... остальные стили конвертируются аналогично ... */
+
+/* Анимации */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Медиа-запросы */
+@media (max-width: 992px) {
+  .grid--4-cols {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .grid--3-cols,
+  .grid--4-cols {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .grid--2-cols,
+  .grid--3-cols,
+  .grid--4-cols {
+    grid-template-columns: 1fr;
+  }
+
+  .hero__title {
+    font-size: 36px;
+  }
+} 

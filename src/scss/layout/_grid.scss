@@ -1,0 +1,36 @@
+@use "../abstracts/variables" as variables;
+
+.grid {
+  display: grid;
+  gap: variables.$spacing-md;
+  
+  &--2-cols {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  &--3-cols {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  &--4-cols {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  @media (max-width: variables.$breakpoint-lg) {
+    &--4-cols {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  @media (max-width: variables.$breakpoint-md) {
+    &--3-cols, &--4-cols {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: variables.$breakpoint-sm) {
+    &--2-cols, &--3-cols, &--4-cols {
+      grid-template-columns: 1fr;
+    }
+  }
+} 

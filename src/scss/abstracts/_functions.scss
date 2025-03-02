@@ -1,0 +1,15 @@
+@use "sass:color";
+
+// Convert px to rem
+@function rem($pixels, $context: 16) {
+  @return ($pixels / $context) * 1rem;
+}
+
+// Lighten/darken color safely
+@function safe-lighten($color, $amount) {
+  @return color.scale($color, $lightness: $amount);
+}
+
+@function safe-darken($color, $amount) {
+  @return color.scale($color, $lightness: -$amount);
+} 

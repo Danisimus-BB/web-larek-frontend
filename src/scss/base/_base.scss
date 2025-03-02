@@ -1,0 +1,23 @@
+@use "../abstracts/variables" as *;
+
+body {
+  background-color: $color-background;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $container-padding;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+} 

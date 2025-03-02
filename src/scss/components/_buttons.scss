@@ -1,0 +1,49 @@
+@use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
+
+.button {
+  @include button-base;
+  
+  &--primary {
+    @include button-variant($color-primary, white);
+  }
+  
+  &--secondary {
+    @include button-variant($color-secondary, white);
+  }
+  
+  &--accent {
+    @include button-variant($color-accent, white);
+  }
+  
+  &--outline {
+    background-color: transparent;
+    border: $border-width solid $color-primary;
+    color: $color-primary;
+    
+    &:hover {
+      background-color: $color-primary;
+      color: white;
+    }
+  }
+  
+  &--small {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-small;
+  }
+  
+  &--large {
+    padding: $spacing-md $spacing-lg;
+    font-size: $font-size-large;
+  }
+  
+  &--block {
+    display: block;
+    width: 100%;
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+} 
