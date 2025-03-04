@@ -1,18 +1,24 @@
-@use "variables" as *;
-@use "mixins";
+@use "../scss/variables" as *;
+@use "../scss/mixins";
 
 .order {
   @include mixins.flex(column);
-  gap: 4rem;
-  margin-bottom: 4rem;
+  gap: 2rem;
 
-  &__field {
-    @include mixins.flex(column);
-    gap: 1.5rem;
+  &__info {
+    @include mixins.flex(row);
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  &__buttons {
-    @include mixins.flex(row);
-    gap: 1.5rem;
+  &__total {
+    font-size: 1.25rem;
+  }
+
+  &__price {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: $secondary;
   }
 }

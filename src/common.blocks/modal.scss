@@ -1,71 +1,122 @@
-@use "variables" as *;
-@use "mixins";
+@use "../scss/variables" as *;
+@use "../scss/mixins";
 
 .modal {
   @include mixins.sublayer;
-  // height: max-content;
-  position: absolute;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 9999;
   display: none;
-  justify-content: center;
-  background-color: $overlayBackground;
-  z-index: 100;
-  padding-top: 5vh;
-  padding-bottom: 5vh;
-  box-sizing: border-box;
+  opacity: 0;
+  transition: opacity 0.3s;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto;
 
-  &_active {
+  &.modal_active {
     display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
   }
 
   &__container {
-    @include mixins.container;
-    @include mixins.flex(column);
-    gap: $defaultPadding;
-    background-color: $background;
-    // min-height: 90vmin;
-    border-radius: 3rem;
-    box-sizing: border-box;
     position: relative;
+    max-width: 80vw;
+    max-height: 80vh;
+    background-color: $background;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    box-sizing: border-box;
+    overflow: auto;
+    
+    /* Скрываем скроллбары во всех браузерах */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera */
+    }
+  }
+  
+  // Специальный класс для модального окна с карточкой товара
+  &.modal_card {
+    .modal__container {
+      background-color: transparent;
+      padding: 0;
+      overflow: visible;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal__close {
+      display: none; // Скрываем стандартную кнопку закрытия
+    }
+    
+    .modal__content {
+      min-width: auto; // Убираем минимальную ширину
+      min-height: auto; // Убираем минимальную высоту
+    }
+  }
+
+  &__close {
+    @include mixins.link;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    z-index: 10;
+
+    &:hover {
+      opacity: 1;
+    }
+    
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 1.5rem;
+      height: 2px;
+      background-color: $secondary;
+    }
+    
+    &::before {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+    
+    &::after {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
   }
 
   &__content {
-    flex-grow: 1;
+    min-width: 30rem;
+    min-height: 10rem;
   }
 
   &__title {
-    margin: 0;
     font-size: 1.5rem;
-    font-weight: 400;
+    font-weight: 700;
+    margin: 0 0 1.5rem 0;
+    color: $secondary;
   }
 
   &__actions {
     @include mixins.flex(row);
+    justify-content: space-between;
     align-items: center;
-    gap: 2rem;
-  }
-
-  &__close {
-    position: absolute;
-    top: calc(#{$defaultPadding} / 2);
-    right: calc(#{$defaultPadding} / 2);
-    @include mixins.icon(2rem, 'close');
-    @include mixins.link(white, $hover);
-  }
-
-  &__footer {
-    @include mixins.flex(row);
-    align-items: center;
-    gap: 2rem;
-  }
-
-  &__message {
-    white-space:nowrap;
-    max-width: 60%;
-    text-overflow: ellipsis;
-    overflow: hidden;
-
-    &_error {
-      color: $error;
-    }
+    margin-top: 2rem;
+    gap: 1rem;
   }
 }

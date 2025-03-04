@@ -1,12 +1,12 @@
-@use "variables" as *;
-@use "mixins";
+@use "../scss/variables" as *;
+@use "../scss/mixins";
 
 .order-success {
   @include mixins.flex(column);
   justify-content: center;
   align-items: center;
   text-align: center;
-  gap: 1rem;
+  gap: 2rem;
 
   &::before {
     content: " ";
@@ -17,5 +17,21 @@
 
   &__close {
     margin-top: 2rem;
+  }
+
+  &__title {
+    font-size: 2.5rem;
+    margin: 0;
+  }
+
+  &__description {
+    font-size: 1.375rem;
+    margin: 0;
+  }
+
+  &__total {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: $secondary;
   }
 }

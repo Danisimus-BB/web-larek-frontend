@@ -1,17 +1,24 @@
-@use "variables" as *;
-@use "mixins";
+@use "../scss/variables" as *;
+@use "../scss/mixins";
 
 .gallery {
   @include mixins.container;
-  @include mixins.grid(600px, 24px);
+
+  &__list {
+    @include mixins.grid(18rem, 1.5rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
 
   &__item {
+    position: relative;
     border: none;
-    border-radius: $defaultBorderRadius;
-    @include mixins.selectable($secondary, 2px, $primaryLight);
+    border-radius: 1.5rem;
+    @include mixins.selectable($secondary, 1px, $primaryLight);
 
     &::after {
-      border-radius: 0.8rem;
+      border-radius: 1.2rem;
     }
   }
 }

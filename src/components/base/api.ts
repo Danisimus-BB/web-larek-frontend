@@ -1,42 +1,66 @@
+import { IApi } from '../../types';
+
 export type ApiListResponse<Type> = {
-    total: number,
-    items: Type[]
+	total: number;
+	items: Type[];
 };
 
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 
-export class Api {
-    readonly baseUrl: string;
-    protected options: RequestInit;
+export type ApiResponse<T> = {
+	success: boolean;
+	data: T;
+	error?: string;
+};
 
-    constructor(baseUrl: string, options: RequestInit = {}) {
-        this.baseUrl = baseUrl;
-        this.options = {
-            headers: {
-                'Content-Type': 'application/json',
-                ...(options.headers as object ?? {})
-            }
-        };
-    }
+export class Api implements IApi {
+	readonly baseUrl: string;
+	protected options: RequestInit;
 
-    protected handleResponse(response: Response): Promise<object> {
-        if (response.ok) return response.json();
-        else return response.json()
-            .then(data => Promise.reject(data.error ?? response.statusText));
-    }
+	constructor(baseUrl: string, options: RequestInit = {}) {
+		this.baseUrl = baseUrl;
+		this.options = {
+			headers: {
+				'Content-Type': 'application/json',
+				...options.headers,
+			},
+			...options,
+		};
+	}
 
-    get(uri: string) {
-        return fetch(this.baseUrl + uri, {
-            ...this.options,
-            method: 'GET'
-        }).then(this.handleResponse);
-    }
+	protected async handleResponse<T>(response: Response): Promise<T> {
+		if (!response.ok) {
+			const error = await response.json().catch(() => ({}));
+			throw new Error(error.message || response.statusText);
+		}
+		const data = await response.json();
+		return data;
+	}
 
-    post(uri: string, data: object, method: ApiPostMethods = 'POST') {
-        return fetch(this.baseUrl + uri, {
-            ...this.options,
-            method,
-            body: JSON.stringify(data)
-        }).then(this.handleResponse);
-    }
+	async get<T>(endpoint: string): Promise<T> {
+		try {
+			const response = await fetch(`${this.baseUrl}${endpoint}`, {
+				...this.options,
+				method: 'GET',
+			});
+			return await this.handleResponse<T>(response);
+		} catch (error) {
+			console.error('API request failed:', error);
+			throw error;
+		}
+	}
+
+	async post<T>(endpoint: string, data: any): Promise<T> {
+		try {
+			const response = await fetch(`${this.baseUrl}${endpoint}`, {
+				...this.options,
+				method: 'POST',
+				body: JSON.stringify(data),
+			});
+			return await this.handleResponse<T>(response);
+		} catch (error) {
+			console.error('API request failed:', error);
+			throw error;
+		}
+	}
 }

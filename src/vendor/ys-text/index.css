@@ -207,7 +207,6 @@
 
 	@font-face {
 		font-family: "YS Text";
-		src: url("YS Text-Regular.woff2") format("woff2");
 		src: url("./YS Text-Regular.eot");
 		src: url("./YS Text-Regular.eot?#iefix") format("embedded-opentype"),
 		url("./YS Text-Regular.woff2") format("woff2"),

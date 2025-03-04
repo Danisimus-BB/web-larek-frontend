@@ -1,31 +1,38 @@
 @use "../scss/variables" as *;
+@use "../scss/mixins";
+@use "sass:color";
 
 .form {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-medium;
-  
-  &__input {
-    padding: $spacing-small;
-    border: 1px solid $border-color;
-    border-radius: 4px;
-  }
-  
+  @include mixins.flex(column);
+  gap: 1.5rem;
+  border-radius: 3rem;
+
   &__label {
-    font-weight: bold;
-    color: $text-color;
+    flex-grow: 1;
   }
-  
-  &__submit {
-    background-color: $primary-color;
+
+  &__input {
+    background: transparent;
     color: white;
-    border: none;
-    padding: $spacing-small;
-    border-radius: 4px;
-    cursor: pointer;
-    
-    &:hover {
-      background-color: $primary-hover;
+    border: $defaultBorder;
+    border-radius: 1.5rem;
+    padding: 1rem;
+    font-size: 1.4rem;
+    width: 100%;
+    box-sizing: border-box;
+    outline-color: $secondary;
+
+    &:focus {
+      outline-style: solid;
+    }
+
+    &:invalid {
+      border-color: $error;
+      outline-color: $error;
+    }
+
+    &::placeholder {
+      color: color.adjust($primaryLight, $lightness: 23%);
     }
   }
 }

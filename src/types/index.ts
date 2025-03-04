@@ -1,55 +1,106 @@
-export interface IProduct {
-    id: string;
-    details?: string;
-    imageUrl: string;
-    name: string;
-    category: string;
-    cost: number;
-    }
+export interface IProductList {
+	id: string;
+	description: string;
+	image: string;
+	title: string;
+	category: string;
+	price: number | null;
+}
 
-export interface ICartItem {
-        productId: string;
-        name: string;
-        cost: number; 
-        quantity: number; 
-        }
-
-export interface IShoppingCart {
-    items: ICartItem[];
-    }
-    
-export interface IUserContactForm {
-    emailAddress: string;
-    phoneNumber: string;
-    }
-
-export interface IPaymentDetails {
-        method: TPaymentMethod;
-        deliveryAddress: string;
-        }
+export interface IBasket {
+	id: string;
+	title: string;
+	price: number;
+	count?: number;
+}
 
 export interface IOrder {
-            items: ICartItem[];
-            contactInfo: IUserContactForm;
-            paymentDetails: IPaymentDetails;
-            totalAmount: number;
-            
-            }
+	total: number;
+	items: string[];
+	email: string;
+	phone: string;
+	address: string;
+	payment: string;
+}
 
-export type TPaymentMethod = 'creditCard' | 'cash' | undefined;
+export interface IFormValidator {
+	valid: boolean;
+	errors: string[];
+}
 
-// Добавляем интерфейс для данных заказа
+export interface IProductsData {
+	products: IProductList[];
+	preview: string | null;
+	setProducts(products: IProductList[]): void;
+	getProducts(): IProductList[];
+	getProduct(id: string): IProductList;
+	savePreview(product: IProductList): void;
+}
+
+export interface IBasketData {
+	products: TProductBasket[];
+	appendToBasket(product: IProductList): void;
+	removeFromBasket(product: IProductList): void;
+	getButtonStatus(product: TProductBasket): string;
+	getBasketPrice(): number;
+	getBasketQuantity(): number;
+	clearBasket(): void;
+	sendBasketToOrder(orderData: IOrderData): void;
+}
+
 export interface IOrderData {
-    items: Array<{
-        product: {
-            id: string;
-            price: number;
-            [key: string]: any;
-        };
-        quantity: number;
-    }>;
-    paymentMethod: string;
-    email: string;
-    phone: string;
-    address: string;
+	formErrors: TFormErrors;
+	order: IOrder;
+	setOrderPayment(value: string): void;
+	setOrderEmail(value: string): void;
+	setOrderField(field: keyof TOrderInput, value: string): void;
+	setOrderField(field: keyof IOrder, value: IOrder[keyof IOrder]): void;
+	validateOrder(): boolean;
+	clearOrder(): void;
+}
+
+export type TProductBasket = Pick<IProductList, 'id' | 'title' | 'price'>;
+
+export type TOrderInput = Pick<
+	IOrder,
+	'payment' | 'address' | 'email' | 'phone'
+>;
+
+export type TFormErrors = Partial<Record<keyof IOrder, string>>;
+
+export type TOrderPayment = Pick<IOrder, 'payment' | 'address'>;
+
+export type TOrderContact = Pick<IOrder, 'email' | 'phone'>;
+
+export type PaymentType = 'card' | 'cash';
+
+export interface ICardActions {
+	onClick: (event: MouseEvent) => void;
+}
+export interface ISuccessActions {
+	onClick: () => void;
+}
+
+export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
+
+export interface IApi {
+	baseUrl: string;
+	get<T>(uri: string): Promise<T>;
+	post<T>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
+}
+
+export interface IProduct {
+	id: string;
+	title: string;
+	description: string;
+	price: number;
+	category: string;
+	image: string;
+}
+
+export interface IAppState {
+	products: IProduct[];
+	cart: { [key: string]: number }; // ID товара -> количество
+	loading: boolean;
+	order: Partial<IOrder> | null;
 }
