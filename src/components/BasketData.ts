@@ -45,7 +45,7 @@ export class BasketData implements IBasketData {
 
 	getBasketPrice() {
 		let total = 0;
-		this._products.map((elem) => {
+		this._products.forEach((elem) => {
 			total += elem.price;
 		});
 		return total;
@@ -60,10 +60,14 @@ export class BasketData implements IBasketData {
 		this.events.emit('basket:change');
 	}
 
-	sendBasketToOrder(orderData: IOrderData) {
-		const orderItems = this._products.map((product) => product.id);
+	getItemsIds(): string[] {
+		return this._products.map(item => item.id);
+	}
 
-		orderData.setOrderField('items', orderItems);
-		orderData.setOrderField('total', this.getBasketPrice());
+	sendBasketToOrder(orderData: IOrderData) {
+		this.events.emit('basket:order', {
+			total: this.getBasketPrice(),
+			items: this.getItemsIds()
+		});
 	}
 }

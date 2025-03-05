@@ -45,10 +45,14 @@ export class Page extends Component<IPage> {
 	}
 
 	set locked(value: boolean) {
-		if (value) {
-			this._wrapper.classList.add('page__wrapper_locked');
-		} else {
-			this._wrapper.classList.remove('page__wrapper_locked');
-		}
+		this.toggleClass(this._wrapper, 'page__wrapper_locked', value);
+	}
+
+	addGalleryListener(eventName: string, callback: (evt: Event) => void): void {
+		this._catalog.addEventListener(eventName, callback);
+	}
+
+	setPageScroll(isEnabled: boolean): void {
+		this.toggleClass(document.body, 'body_lock-scroll', !isEnabled);
 	}
 }

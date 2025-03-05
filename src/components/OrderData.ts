@@ -36,8 +36,16 @@ export class OrderData implements IOrderData {
 	setOrderAddress(value: string) {
 		this._order.phone = value;
 	}
-	setOrderField(field: keyof TOrderInput, value: string) {
-		this._order[field] = value;
+	
+	// Перегрузка для полей ввода (строковые значения)
+	setOrderField(field: keyof TOrderInput, value: string): void;
+	// Перегрузка для поля total (числовое значение)
+	setOrderField(field: 'total', value: number): void;
+	// Перегрузка для поля items (массив строк)
+	setOrderField(field: 'items', value: string[]): void;
+	// Реализация метода
+	setOrderField(field: string, value: any): void {
+		(this._order as any)[field] = value;
 		this.validateOrder();
 	}
 

@@ -66,20 +66,25 @@
 
   &__image {
     position: relative;
-    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
-    height: 0;
-    padding-bottom: 75%;
-    border-radius: 1rem;
+    padding-bottom: 100%;
     margin-bottom: 1rem;
-
+    overflow: hidden;
+    border-radius: 0.5rem;
+    background-color: #0E1621;
+    
     img {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      width: 80%;
+      height: 80%;
+      top: 10%;
+      left: 10%;
       object-fit: contain;
+      filter: brightness(0) invert(1);
+      opacity: 1;
     }
   }
 
@@ -178,7 +183,7 @@
 
   &_modal {
     @include mixins.flex(column);
-    background-color: #1A1E26;
+    background-color: $primary;
     padding: 2rem;
     gap: 1.5rem;
     border-radius: 1.5rem;
@@ -231,9 +236,17 @@
       width: 40%;
       padding-bottom: 35%;
       margin: 0 auto;
+      background-color: #0E1621;
       
       img {
+        position: absolute;
+        width: 80%;
+        height: 80%;
+        top: 10%;
+        left: 10%;
         object-fit: contain;
+        filter: brightness(0) invert(1);
+        opacity: 1;
       }
     }
     

@@ -49,12 +49,23 @@ export class Modal extends Component<IModalData> {
 	// Открыть модальное окно
 	open(): void {
 		this.toggleClass(this.container, 'modal_active', true);
+		
+		// Эмитируем событие открытия модального окна
+		// Блокировка прокрутки будет выполнена в соответствующих классах
 		this.events.emit('modal:open');
 	}
 
 	// Закрыть модальное окно
 	close(): void {
+		// Удаляем специальные стилевые классы
+		if (this.hasStyleClass('modal_card')) {
+			this.removeStyleClass('modal_card');
+		}
+		
 		this.toggleClass(this.container, 'modal_active', false);
+		
+		// Эмитируем событие закрытия модального окна
+		// Разблокировка прокрутки будет выполнена в соответствующих классах
 		this.events.emit('modal:close');
 	}
 
@@ -70,5 +81,20 @@ export class Modal extends Component<IModalData> {
 		this.content = data.content;
 		this.open();
 		return this.container;
+	}
+
+	// Добавить стилевой класс к модальному окну
+	addStyleClass(className: string): void {
+		this.container.classList.add(className);
+	}
+
+	// Проверить наличие стилевого класса у модального окна
+	hasStyleClass(className: string): boolean {
+		return this.container.classList.contains(className);
+	}
+
+	// Удалить стилевой класс у модального окна
+	removeStyleClass(className: string): void {
+		this.container.classList.remove(className);
 	}
 }

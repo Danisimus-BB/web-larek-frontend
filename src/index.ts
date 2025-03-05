@@ -38,6 +38,11 @@ const modal = new Modal(modalContainerTemplate, events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 const contactForm = new OrderContacts(cloneTemplate(contactsTemplate), events);
 const orderForm = new OrderPayment(cloneTemplate(orderTemplate), events);
+const success = new Success(cloneTemplate(orderSuccessTemplate), {
+	onClick: () => {
+		modal.close();
+	},
+});
 
 // Загрузка продуктов при старте приложения
 api.getProducts()
@@ -69,6 +74,10 @@ events.on('card:change', () => {
 });
 
 events.on('card:selected', (product: IProductList) => {
+	events.emit('preview:save', product);
+});
+
+events.on('preview:save', (product: IProductList) => {
 	productsData.savePreview(product);
 });
 
@@ -81,10 +90,7 @@ events.on('preview:change', (product: IProductList) => {
 	});
 	
 	// Добавляем специальный класс для модального окна
-	const modalElement = document.getElementById('modal-container');
-	if (modalElement) {
-		modalElement.classList.add('modal_card');
-	}
+	modal.addStyleClass('modal_card');
 	
 	modal.render({
 		content: card.render({
@@ -97,19 +103,13 @@ events.on('preview:change', (product: IProductList) => {
 			buttonText: basketData.getButtonStatus(product),
 		}),
 	});
-
-	// Добавляем обработчик закрытия модального окна
-	const closeHandler = () => {
-		if (modalElement) {
-			modalElement.classList.remove('modal_card');
-		}
-		events.off('modal:close', closeHandler);
-	};
-	
-	events.on('modal:close', closeHandler);
 });
 
 events.on('card:basket', (product: IProductList) => {
+	events.emit('basket:add', product);
+});
+
+events.on('basket:add', (product: IProductList) => {
 	basketData.isBasketCard(product);
 });
 
@@ -136,46 +136,6 @@ events.on('basket:change', () => {
 	});
 });
 
-// Предотвращаем прокрутку страницы при открытии модального окна
-// Находим обработчик события клика на карточку
-document.addEventListener('DOMContentLoaded', () => {
-	const galleryElement = document.querySelector('.gallery');
-	if (galleryElement) {
-		galleryElement.addEventListener('click', (evt) => {
-			// Проверяем, что клик был по карточке
-			const cardElement = (evt.target as HTMLElement).closest('.card');
-			if (cardElement) {
-				// Предотвращаем действие по умолчанию и всплытие события
-				evt.preventDefault();
-				evt.stopPropagation();
-			}
-		});
-	}
-});
-
-// Также предотвращаем прокрутку непосредственно при открытии модального окна
-events.on('modal:open', () => {
-	// Запоминаем текущую позицию прокрутки
-	const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-	
-	// Устанавливаем стили для предотвращения прокрутки, сохраняя текущую позицию
-	document.body.style.overflow = 'hidden';
-	document.body.style.width = '100%';
-	
-	// Сохраняем исходное поведение
-	page.locked = true;
-});
-
-// Восстанавливаем прокрутку при закрытии модального окна
-events.on('modal:close', () => {
-	// Восстанавливаем стили
-	document.body.style.overflow = '';
-	document.body.style.width = '';
-	
-	// Сохраняем исходное поведение
-	page.locked = false;
-});
-
 events.on('order:open', () => {
 	modal.render({
 		content: orderForm.render({
@@ -192,12 +152,23 @@ events.on(
 		field: keyof Pick<IOrder, 'address' | 'phone' | 'email'>;
 		value: string;
 	}) => {
-		orderData.setOrderField(data.field, data.value);
+		events.emit('order:field', data);
 	}
 );
 
+events.on('order:field', (data: {
+	field: keyof Pick<IOrder, 'address' | 'phone' | 'email'>;
+	value: string;
+}) => {
+	orderData.setOrderField(data.field, data.value);
+});
+
 events.on('order:change', (data: { payment: PaymentType; button: HTMLElement }) => {
 	orderForm.togglePayment(data.button);
+	events.emit('order:payment', { payment: data.payment });
+});
+
+events.on('order:payment', (data: { payment: PaymentType }) => {
 	orderData.setOrderPayment(data.payment);
 	orderData.validateOrder();
 });
@@ -224,25 +195,49 @@ events.on('order:submit', () => {
 });
 
 events.on('contacts:submit', () => {
-	basketData.sendBasketToOrder(orderData);
+	events.emit('basket:sendToOrder', orderData);
 
 	api.orderProducts(orderData.order)
 		.then((result) => {
-			const success = new Success(cloneTemplate(orderSuccessTemplate), {
-				onClick: () => {
-					modal.close();
-				},
-			});
-			basketData.clearBasket();
-			orderData.clearOrder();
+			events.emit('basket:clear');
+			events.emit('order:clear');
+			success.total = result.total;
 			modal.render({
-				content: success.render({
-					total: result.total,
-				}),
+				content: success.render(),
 			});
 		})
 		.catch((error) => {
 			console.error(`Произошла ошибка при отправке заказа: ${error}`);
 			alert('Произошла ошибка при отправке заказа. Пожалуйста, попробуйте позже.');
 		});
+});
+
+events.on('basket:sendToOrder', (data: OrderData) => {
+	basketData.sendBasketToOrder(data);
+});
+
+// Добавляем обработчик для события basket:order
+events.on('basket:order', (data: { total: number, items: string[] }) => {
+	// Теперь можем использовать типизированные методы
+	orderData.setOrderField('total', data.total);
+	orderData.setOrderField('items', data.items);
+});
+
+events.on('basket:clear', () => {
+	basketData.clearBasket();
+});
+
+events.on('order:clear', () => {
+	orderData.clearOrder();
+});
+
+// Управление прокруткой страницы при открытии/закрытии модального окна
+events.on('modal:open', () => {
+	page.setPageScroll(false); // Блокировать прокрутку
+	page.locked = true; // Заблокировать обертку страницы
+});
+
+events.on('modal:close', () => {
+	page.setPageScroll(true); // Разблокировать прокрутку
+	page.locked = false; // Разблокировать обертку страницы
 });

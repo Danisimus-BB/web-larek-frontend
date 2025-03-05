@@ -15,3 +15,8 @@ html, body.page {
 		position: fixed;
 	}
 }
+
+.body_lock-scroll {
+	overflow: hidden;
+	padding-right: 17px; /* Компенсация для скроллбара */
+}

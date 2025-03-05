@@ -54,7 +54,8 @@ export interface IOrderData {
 	setOrderPayment(value: string): void;
 	setOrderEmail(value: string): void;
 	setOrderField(field: keyof TOrderInput, value: string): void;
-	setOrderField(field: keyof IOrder, value: IOrder[keyof IOrder]): void;
+	setOrderField(field: 'total', value: number): void;
+	setOrderField(field: 'items', value: string[]): void;
 	validateOrder(): boolean;
 	clearOrder(): void;
 }

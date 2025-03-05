@@ -1,0 +1,84 @@
+﻿import { IEvents } from './base/events';
+import { IOrderData, IBasketData, TProductBasket } from '../types/index';
+
+export class BasketData implements IBasketData {
+	protected _products: TProductBasket[] = [];
+
+	constructor(protected events: IEvents) {
+		this.events = events;
+	}
+
+	get products(): TProductBasket[] {
+		return this._products;
+	}
+
+	appendToBasket(product: TProductBasket) {
+		this._products.push(product);
+		this.events.emit('basket:change');
+	}
+
+	removeFromBasket(product: TProductBasket) {
+		this._products = this._products.filter(
+			(_product) => _product.id !== product.id
+		);
+		this.events.emit('basket:change');
+	}
+
+	isBasketCard(product: TProductBasket) {
+		return !this.products.some((card) => card.id === product.id)
+			? this.appendToBasket(product)
+			: this.removeFromBasket(product);
+	}
+
+	getButtonStatus(product: TProductBasket) {
+		if (
+			product.price === null ||
+			product.price === undefined ||
+			String(product.price) === 'Ð‘ÐµÑÑ†ÐµÐ½Ð½Ð¾'
+		) {
+			return 'ÐÐµÐ»ÑŒÐ·Ñ ÐºÑƒÐ¿Ð¸Ñ‚ÑŒ';
+		}
+		return !this._products.some((card) => card.id === product.id)
+			? 'ÐšÑƒÐ¿Ð¸Ñ‚ÑŒ'
+			: 'Ð£Ð´Ð°Ð»Ð¸Ñ‚ÑŒ';
+	}
+
+	getBasketPrice() {
+		let total = 0;
+		this._products.forEach((elem) => {
+			total += elem.price;
+		});
+		return total;
+	}
+
+	getBasketQuantity() {
+		return this._products.length;
+	}
+
+	clearBasket() {
+		this._products = [];
+		this.events.emit('basket:change');
+	}
+
+	sendBasketToOrder(orderData: IOrderData) {
+		// ÐžÐ¿Ñ€ÐµÐ´ÐµÐ»ÑÐµÐ¼ Ñ‚Ð¾Ð²Ð°Ñ€ "ÐœÐ°Ð¼ÐºÐ°-Ñ‚Ð°Ð¹Ð¼ÐµÑ€" Ð¿Ð¾ ÐµÐ³Ð¾ Ð½Ð°Ð·Ð²Ð°Ð½Ð¸ÑŽ (Ñ‚Ð°ÐºÐ¶Ðµ Ð¼Ð¾Ð¶Ð½Ð¾ Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÑŒ ID Ð¸Ð»Ð¸ ÐºÐ°Ñ‚ÐµÐ³Ð¾Ñ€Ð¸ÑŽ)
+		const TIMER_PRODUCT_NAME = "ÐœÐ°Ð¼ÐºÐ°-Ñ‚Ð°Ð¹Ð¼ÐµÑ€";
+		
+		// Ð¤Ð¸Ð»ÑŒÑ‚Ñ€ÑƒÐµÐ¼ Ñ‚Ð¾Ð²Ð°Ñ€Ñ‹, Ð¸ÑÐºÐ»ÑŽÑ‡Ð°Ñ "ÐœÐ°Ð¼ÐºÐ°-Ñ‚Ð°Ð¹Ð¼ÐµÑ€" Ð¸Ð· Ð·Ð°ÐºÐ°Ð·Ð°
+		const filteredProducts = this._products.filter(product => product.title !== TIMER_PRODUCT_NAME);
+		
+		// ÐŸÐ¾Ð»ÑƒÑ‡Ð°ÐµÐ¼ ID Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð¾Ñ‚Ñ„Ð¸Ð»ÑŒÑ‚Ñ€Ð¾Ð²Ð°Ð½Ð½Ñ‹Ñ… Ñ‚Ð¾Ð²Ð°Ñ€Ð¾Ð²
+		const orderItems = filteredProducts.map((product) => product.id);
+		
+		// Ð Ð°ÑÑÑ‡Ð¸Ñ‚Ñ‹Ð²Ð°ÐµÐ¼ Ð¾Ð±Ñ‰ÑƒÑŽ ÑÑ‚Ð¾Ð¸Ð¼Ð¾ÑÑ‚ÑŒ Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð´Ð»Ñ Ð¾Ñ‚Ñ„Ð¸Ð»ÑŒÑ‚Ñ€Ð¾Ð²Ð°Ð½Ð½Ñ‹Ñ… Ñ‚Ð¾Ð²Ð°Ñ€Ð¾Ð²
+		let total = 0;
+		filteredProducts.forEach(product => {
+			total += product.price;
+		});
+
+		// Ð£ÑÑ‚Ð°Ð½Ð°Ð²Ð»Ð¸Ð²Ð°ÐµÐ¼ Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð·Ð°ÐºÐ°Ð·Ð°
+		orderData.setOrderField('items', orderItems);
+		orderData.setOrderField('total', total);
+	}
+}
+
